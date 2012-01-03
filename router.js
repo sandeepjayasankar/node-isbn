@@ -1,16 +1,18 @@
 var url = require("url");
+var winston = require('winston');
+
 
 function route(handle,requesturl,response,staticPages)
 {
 
 	var pathname = url.parse(requesturl).pathname;
-   // console.log("Request for " + pathname + " received.");
+   // winston.info("Request for " + pathname + " received.");
 	
 	var url_parts = url.parse(requesturl, true);
     var query = url_parts.query;
 
-    //console.log("Query: "+query); //{Object}
-	//console.log("About to route a request for " + pathname);
+    //winston.info("Query: "+query); //{Object}
+	//winston.info("About to route a request for " + pathname);
 	
     
 	if (typeof handle[pathname] === 'function') 
@@ -19,9 +21,9 @@ function route(handle,requesturl,response,staticPages)
 	} 
 	else if(staticPages[pathname]!= null)
 	{
-		//console.log("writing head"+staticPages[pathname].header);
+		//winston.info("writing head"+staticPages[pathname].header);
 		response.writeHead(200, {"Content-Type": staticPages[pathname].header});
-		//console.log("writing page"+staticPages[pathname].page);
+		//winston.info("writing page"+staticPages[pathname].page);
 		response.write(staticPages[pathname].page);
 		response.end();
 	}
@@ -29,7 +31,7 @@ function route(handle,requesturl,response,staticPages)
 	{
 		response.writeHead(302, {"Content-Type" : "text/plain",
 							"location" : "/books"});
-		console.log("Request redirected");
+		winston.info("Request redirected");
 		response.write("No request handler found for " + pathname);
 		response.end();
 		

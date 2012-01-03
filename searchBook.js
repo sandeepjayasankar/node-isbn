@@ -1,9 +1,10 @@
-console.log("searchBook module created");
+var winston = require('winston');
+winston.info("searchBook module created");
 var index = 1;
 function searchBookGoodRead(keyword,displayFunction)
 {
-	console.log("searchBook Function");
-	console.log("index"+index);
+	winston.info("searchBook Function");
+	winston.info("index"+index);
 	index++;
 	sleep(800);
 	var http = require('http');
@@ -16,26 +17,26 @@ function searchBookGoodRead(keyword,displayFunction)
 			}
 	http.get(options, function(pageRes)
 	{
-		console.log("pageRes.statusCode " + pageRes.statusCode);
+		winston.info("pageRes.statusCode " + pageRes.statusCode);
 		var data = '';
 		if(pageRes.statusCode==200)
 		{
 			pageRes.on('data', function(chunk) {data += chunk.toString();})
 			.on('end', function() 
 				{
-					console.log("displayFunction");
+					winston.info("displayFunction");
 					displayFunction(data);
 				})	
 		}
 	}).on('error', function(e) {
-					console.log("Got error: " + e.message);
+					winston.info("Got error: " + e.message);
 					return;
 					});
 }
 
 function searchBook(keyword,displayFunction)
 {
-	console.log("searchBookAWS Function");
+	winston.info("searchBookAWS Function");
 	var OperationHelper = require('apac').OperationHelper;
 
 	var opHelper = new OperationHelper({
@@ -52,7 +53,7 @@ function searchBook(keyword,displayFunction)
 		{
 			if (error) 
 			{ 
-				console.log('Error: ' + error + "\n") 
+				winston.info('Error: ' + error + "\n") 
 			}
 			displayFunction(results);
 		});

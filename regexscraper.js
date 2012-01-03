@@ -1,15 +1,6 @@
 var http = require('http');
 
-
-var regex =/Rs.<span.*<\/span>(\d*\d)<\/span>/g;
-var regex2 = /<head>(.*)<\/head>/g;
-var regex3 = /<.*href.*>(.*)<\/a>/g;
-var regex4 = /<[^<]+?>/g;
-var regex5 =/<.*>([0-9].*[0-9])<\/.*>/g;
-var regex6 = /<\/span>(.*)<\/span>/g;
-
-
-
+var winston = require('winston');
 
  function scrapeOld(res,req)
  {
@@ -34,7 +25,7 @@ var regex6 = /<\/span>(.*)<\/span>/g;
 
 	for(i=0;i<optionsArray.length;i++)
 	{
-		//console.log(optionsArray[i].host,optionsArray[i].path+isbn);
+		//winston.info(optionsArray[i].host,optionsArray[i].path+isbn);
 		//var options1 = {
 		//	host: optionsArray[i].host,
 		//		path: optionsArray[i].path,
@@ -52,7 +43,7 @@ var regex6 = /<\/span>(.*)<\/span>/g;
 					 }
 				
 				},
-				function(item){items.push(item);console.log("items.length -"+items.length);console.log(items.length+ ": "+item.merchant,item.price);});
+				function(item){items.push(item);winston.info("items.length -"+items.length);winston.info(items.length+ ": "+item.merchant,item.price);});
 	}
 	
 	
@@ -118,7 +109,7 @@ function getPage(options,responseFunction,response)
 		if(pageRes.statusCode==301||pageRes.statusCode==302)
 		{
 			var redirectURL = pageRes.headers.location;
-			console.log("redirectURL ->"+redirectURL);
+			winston.info("redirectURL ->"+redirectURL);
 			if(url.parse(redirectURL).hostname!=null)
 			{			
 				options.host = url.parse(redirectURL).hostname;
@@ -127,7 +118,7 @@ function getPage(options,responseFunction,response)
 			var search = url_parts.search;
 			options.path = url.parse(redirectURL).pathname+search;
 			
-			console.log("Redirect to " + options.host+options.path);
+			winston.info("Redirect to " + options.host+options.path);
 			getPage(options,responseFunction,response);
 			
 		}
@@ -140,7 +131,7 @@ function getPage(options,responseFunction,response)
 				})	
 		}
 	}).on('error', function(e) {
-					console.log("Got error: " + e.message);
+					winston.info("Got error: " + e.message);
 					return;
 					});
 	
@@ -156,15 +147,15 @@ function priceRespond(storeDetails,data,response)
 	}];
 	
 	
-	//console.log(returnStore);
+	//winston.info(returnStore);
 	response.writeHead(200, {"Content-Type": "application/json"});
 	//response.write("Request handler 'search' was called.");
-	//console.log(data);
+	//winston.info(data);
 	
 	while((match = storeDetails.regex.exec(data)))
 	{
 		returnStore[0].price = match[1];
-		console.log("price: "+returnStore[0].price);
+		winston.info("price: "+returnStore[0].price);
 	}
 	
 	response.write(JSON.stringify(returnStore));
@@ -188,12 +179,12 @@ function isbnRespond(options,data,response)
 	while((match = regexISBN.exec(data)))
 	{
 		isbn = match[1];
-		console.log("isbn: "+isbn);
+		winston.info("isbn: "+isbn);
 	}
 	scrape(isbn,response);
 	//response.writeHead(302, {"Content-Type" : "text/plain",
 	//						"location" : "/books/book/"+isbn});
-	//console.log("Request redirected to /books/book/"+isbn);
+	//winston.info("Request redirected to /books/book/"+isbn);
 	//response.write("Request handler 'book' was called.");
 	//response.end();	
  }
@@ -209,7 +200,7 @@ function isbnRespond(options,data,response)
 			merchant: "flipkart",
 			isbn:isbn
 			};
-	console.log("scrape for isbn: "+isbn);
+	winston.info("scrape for isbn: "+isbn);
 	getPage(options,infoScrape,response);
 	
 			
@@ -240,22 +231,22 @@ function isbnRespond(options,data,response)
 	while((match = regexTitle.exec(data)))
 	{
 		returnObj[0].title = match[1];
-		console.log("Title: "+returnObj[0].title);
+		winston.info("Title: "+returnObj[0].title);
 	}
 	while((match = regexAuthor.exec(data)))
 	{
 		returnObj[0].author = match[1];
-		console.log("Author: "+returnObj[0].author);
+		winston.info("Author: "+returnObj[0].author);
 	}
 	while((match = regexDesc.exec(data)))
 	{
 		returnObj[0].desc = match[1];
-		console.log("Desc: "+returnObj[0].desc);
+		winston.info("Desc: "+returnObj[0].desc);
 	}
 	while((match = regexImage.exec(data)))
 	{
 		returnObj[0].image = match[1];
-		console.log("Image: "+returnObj[0].image);
+		winston.info("Image: "+returnObj[0].image);
 	}
 	response.write(JSON.stringify(returnObj));
 	response.end();

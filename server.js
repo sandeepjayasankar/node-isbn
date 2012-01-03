@@ -1,6 +1,10 @@
 var http = require("http");
 var fs = require('fs');
+var winston = require('winston');
+winston.add(winston.transports.File, { filename: 'server.log',
+										handleExceptions: true  });
 
+winston.handleExceptions();
 
 function start(route,handle) 
 {
@@ -11,7 +15,7 @@ function start(route,handle)
 			throw err; 
 		}
 		style = data;
-		console.log("bootstrap.css was read");	
+		winston.info("bootstrap.css was read");	
 	});
 	
 	var bookspage;
@@ -21,7 +25,7 @@ function start(route,handle)
 			throw err; 
 		}
 		bookspage = data;
-		console.log("bookhome was read");
+		winston.info("bookhome was read");
 	});
 	
 	var jsrender;
@@ -31,7 +35,7 @@ function start(route,handle)
 			throw err; 
 		}
 		jsrender = data;
-		console.log("jsrender.js was read");
+		winston.info("jsrender.js was read");
 	});
 	
 	var bootstrapModal;
@@ -41,7 +45,7 @@ function start(route,handle)
 			throw err; 
 		}
 		bootstrapModal = data;
-		console.log("bootstrapModal.js was read");
+		winston.info("bootstrapModal.js was read");
 	});
 	
 	
@@ -61,7 +65,7 @@ function start(route,handle)
   }
 
   http.createServer(onRequest).listen(8888);
-  console.log("Server has started. Listening at 8888");
+  winston.info("Server has started. Listening at 8888");
 }
 
 exports.start = start;
