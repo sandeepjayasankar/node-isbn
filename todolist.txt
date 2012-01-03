@@ -1,0 +1,14 @@
+!!!Name Check ->> cache implementation, synchronous implementation
+!! google analytics
+1. Add Stores
+2. Redirect to new URL\
+3. Check Out of stock
+4. DNS
+5. Blog
+6. Website static pages -> home, about etc
+7. Nginx caching
+8. Run forever => upstart?supervisord?forever.js
+9. github hook
+10. favicon
+11. logo
+

@@ -170,6 +170,33 @@ function priceRespond(storeDetails,data,response)
 	response.write(JSON.stringify(returnStore));
 	response.end();
 }
+
+function isbnScrape(id,response)
+{
+	var options = {
+			host: "www.goodreads.com",
+			path: "/book/show/"+id+"?format=json&key=Uzis4FMar7ijHBYkspw",
+			};
+	getPage(options,isbnRespond,response);
+}
+
+function isbnRespond(options,data,response)
+ {
+	//var regexISBN =  /isbn=.*([0-9]{13})/g;
+	var regexISBN = /isbn=([0-9]*)&/g;
+	var isbn;
+	while((match = regexISBN.exec(data)))
+	{
+		isbn = match[1];
+		console.log("isbn: "+isbn);
+	}
+	scrape(isbn,response);
+	//response.writeHead(302, {"Content-Type" : "text/plain",
+	//						"location" : "/books/book/"+isbn});
+	//console.log("Request redirected to /books/book/"+isbn);
+	//response.write("Request handler 'book' was called.");
+	//response.end();	
+ }
  
  function scrape(isbn,response)
  {
@@ -179,14 +206,17 @@ function priceRespond(storeDetails,data,response)
 			//path: "/book/isbn?isbn="+isbn.slice(-10)+"&format=json",
 			host: "www.flipkart.com",
 			path: "/books/"+isbn,
-			merchant: "flipkart"
+			merchant: "flipkart",
+			isbn:isbn
 			};
-	
+	console.log("scrape for isbn: "+isbn);
 	getPage(options,infoScrape,response);
 	
 			
 			
  }
+ 
+ 
  
  function infoScrape(options,data,response)
  {
@@ -200,7 +230,8 @@ function priceRespond(storeDetails,data,response)
 		title:"Not Available",
 		author:"Not Available",
 		desc:"Not Available",
-		image:"Not Available"
+		image:"Not Available",
+		isbn:options.isbn
 	}];
 	
 	response.writeHead(200, {"Content-Type": "application/json"});
@@ -234,4 +265,5 @@ function priceRespond(storeDetails,data,response)
  
   exports.scrape = scrape;
   exports.scrapePrice = scrapePrice;
+  exports.isbnScrape = isbnScrape;
 

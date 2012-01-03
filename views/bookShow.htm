@@ -2,15 +2,17 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Book Prices @ priceseer </title>
+    <title>Book Price, makesen.se </title>
     <meta name="description" content="book price comparison">
     <meta name="author" content="webseer technology private limited">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
 
+    <!-- Le styles -->
     <!--link rel="stylesheet" href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css"-->
 	<link rel="stylesheet" href="../public/css/bootstrap.css">
     <style type="text/css">
@@ -47,7 +49,7 @@
         padding: 20px 20px 10px;
         margin: -20px -20px 20px;
       }
-		
+
       
 	  
      /* Give a quick and non-cross-browser friendly divider */
@@ -65,40 +67,40 @@
 	
 	
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
 	<script src="../public/js/jsrender.js" type="text/javascript"></script>
 	<script src="../public/js/bootstrap-modal.js" type="text/javascript"></script>
 	<script id="bookTemplate" type="text/html">
-		<table class="media-grid">
-			<tr>
-			<td>
+		<ul class="media-grid">
+			<li>
 				<a href="#">
 					<img class="thumbnail" src="{{=image}}"alt="">
 				</a>
-			</td>
-			<td>
-				<div> 
+			</li>
+			<li>
+				<div style="padding-left:100px"> 
 					<h3> {{=title}}</h3>
 					<h4> {{=author}}</h4>
 					{{=desc}}
 				</div>
-			</td>
-			</tr>
-		</table>
+			</li>
+		</ul>
     </script>
 	
 	<script id="bookModalTemplate" type="text/html">
-	<tr class="ui-widget-content" id="{{=ISBN}}">
-		<td>
-		<img class="thumbnail" src="{{=image}}"alt=""></td>
-		
-		<a href="../books/book?show={{=ISBN}}">
-		<td>
-			<h4><p>{{=title}}</p></h4>
-			<h5> {{=author}}</h5>
-			
+	
+	<tr>
+	<label>
+		<input id="{{=goodReadID}}" type="button"/>
+		<td class="media-grid">
+			<img class="thumbnail" src="{{=image}}"alt="">
 		</td>
-		</a>
+		<td>
+			<a href="../books?show={{=goodReadID}}">
+			<blockquote> <p>{{=title}}</p>
+				<small> {{=author}}</small>
+			</blockquote></a>
+		</td>
+	</label>
 	</tr>	
 	</script>
 	
@@ -123,9 +125,9 @@
 				//{
 					//location.href = term ;
 				//}
-				search(term);	
+				getBook(term);	
 				//getPrices(term);
-				$('#search').val("");
+				//$('#search').val("");
 			} 
 			else
 			{
@@ -139,25 +141,20 @@
 			}
 		});
 		
-		function search(term)
+		function getBook(isbn)
 		{
+			
+			
 			$('#bookModal').modal({
 			  keyboard: true
 			});
 			$('#modalTable').html("<p>Searching for matching books...</p>");
-			if(term !=null && term !='' && !isNaN (term) && term.length==13 )
-			{
-				//console.log("term "+term+" is an ISBN");
-				$('#mainDisplay').html('Book details are being retrieved for ISBN: '+term);
-				getBook(term);
-			}
-			else
-			{
-				$('#bookModal').modal('show');
-				$.ajax(
+			$('#bookModal').modal('show');
+			//$('#mainDisplay').html('Book details are being retrieved');
+			$.ajax(
 				{
 					type: "GET",
-					url : "books/search?term="+term,
+					url : "books/search?term="+isbn,
 					async : true,
 					dataType: "json",
 					success: function(object, data)
@@ -166,39 +163,14 @@
 						$.each(object,function(object,Object)
 						{
 							list = list+$("#bookModalTemplate").render(Object);
+							//$('#mainDisplay').html($("#bookTemplate").render(object[0]));
 						});
+						
 						$('#modalTable').html(list);
+						
 					}
-				});
-			}
-		}
-		
-		$( "#modalTable" ).selectable({
-				selected: function(event, ui) 
-				{ 
+					});
 					
-					//"/books/book?show="+ui.id
-					event;
-					var id = ui.selected.id;
-					getBook(id);
-					
-				}
-			});
-			
-		function getBook(isbn)
-		{
-			$.ajax({
-					type: "GET",
-					url : "books/book?show="+isbn,
-					async : true,
-					dataType: "json",
-					success: function(object, data)
-					{
-						$('#mainDisplay').html($("#bookTemplate").render(object[0]));
-						$('#bookModal').modal('hide')
-						getPrices(object[0].isbn);
-					}
-				});
 		}
 		
 		function getPrices(isbn)
@@ -228,9 +200,17 @@
 						{
 							$('#price-table').html(table+$("#priceTable").render(object[0]));
 						}
+						
 					}
 					});
 			});
+			
+		}
+		
+		
+		function bookElement(book)
+		{
+			
 			
 		}
 	})
@@ -249,18 +229,17 @@
     <div class="topbar">
       <div class="fill">
         <div class="container">
-          <a class="brand" href="http://makesen.se/">price<em>seer</em></a>
+          <a class="brand" href="http://makesen.se/">makesen.se</a>
           <ul class="nav">
             <li class="active"><a href="#">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#contact">Contact</a></li>
-			<li><a href="http://makesen.se/">makesen.se</em></a></li>
           </ul>
-          <!--form action="" class="pull-right">
+          <form action="" class="pull-right">
             <input class="input-small" type="text" placeholder="Username">
             <input class="input-small" type="password" placeholder="Password">
             <button class="btn" type="submit">Sign in</button>
-          </form-->
+          </form>
         </div>
       </div>
     </div>
@@ -271,9 +250,9 @@
         <div class="page-header">
 			<div class ="row">
 				<div class="container">
-					<h1>Compare and get the best price online!
+					<h1>price<em>seer</em> <small>Compare and get the best price!</small>
 						<form action="" class="pull-right">
-							<input type="text" class="xlarge" id="search" placeholder="Enter book name or isbn13"/>
+							<input type="text" class="xlarge" id="search" placeholder="Enter book name or isbn"/>
 						</form>
 					</h1>
 				
@@ -289,23 +268,12 @@
 				Just enter the name of the book in the Seach bar</i>
 			</div>
 			
-			<div id="bookModal" class="modal hide" >
+			<div id="bookModal" class="modal hide" style="overflow:auto;">
 				<div class="modal-header">
 				  <a href="#" class="close">&times;</a>
 				  <h3>Matching Books</h3>
 				</div>
-				<div id="modalBody" class="modal-body" style="overflow:auto;">
-				<style>
-					#feedback { font-size: 1.4em; }
-					#modalTable .ui-selecting { background: #E8E8E8; }
-					#modalTable .ui-selected { background: #E1E1E1; color: #EDEDED; }
-					#modalTable table:hover:after, table:focus:after
-					{
-						background: rgb(255,255,255);
-						color: #000;
-					}
-					
-				</style>
+				<div id="modalBody" class="modal-body">
 				<table id="modalTable" class="zebra-striped">
 				</table>
 				</div>
