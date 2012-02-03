@@ -12,7 +12,7 @@ function searchBookGoodRead(keyword,displayFunction)
 	var options = {
 			//http://www.goodreads.com/search?query=
 			host: "www.goodreads.com",
-			path: "/search?query="+keyword+"&key=Uzis4FMar7ijHBYkspw",
+			path: "/search?query="+keyword+"&key=",
 			
 			}
 	http.get(options, function(pageRes)
@@ -40,8 +40,8 @@ function searchBook(keyword,displayFunction)
 	var OperationHelper = require('apac').OperationHelper;
 
 	var opHelper = new OperationHelper({
-		awsId:     'AKIAIZ3E7SQNZARUSUSQ',
-		awsSecret: '3uZJPgyGCPxp0ogbEYC28ER748bERDP15F2i3jtT',
+		awsId:     '',
+		awsSecret: '',
 		assocId:   '[YOUR ASSOCIATE TAG HERE]',
 	});
 
